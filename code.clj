@@ -35,14 +35,26 @@
     )))
 
 (defn print-answer-02 [ pos_and_depth ]
-  (do
-    (println "pos " (first pos_and_depth))
-    (println "depth " (first pos_and_depth))
-    (println "ans " (* (first pos_and_depth) (second pos_and_depth)))
-    ))
+  (let [ans (* (first pos_and_depth) (second pos_and_depth))]
+    (do
+      (println "pos " (first pos_and_depth))
+      (println "depth " (first pos_and_depth))
+      (println "ans " ans)
+      ans)))
 
 (defn aoc02 []
   (let [lines (read-strings "input-02")]
     (print-answer-02 (reduce aoc02-navigate '(0 0) lines))))
 
 ; 221580
+
+
+
+(defn exec [func_name]
+  (do
+    (println func_name (apply (resolve (symbol func_name)) []))
+    (println "---")))
+
+(exec "aoc01")
+(exec "aoc01b")
+(exec "aoc02")
