@@ -40,14 +40,39 @@
       (println "pos " (first pos_and_depth))
       (println "depth " (first pos_and_depth))
       (println "ans " ans)
-      ans)))
+      pos_and_depth)))
 
 (defn aoc02 []
   (let [lines (read-strings "input-02")]
     (print-answer-02 (reduce aoc02-navigate '(0 0) lines))))
 
-; 221580
+(defn aoc02b-navigate [ pos_depth_aim line ]
+  (let [
+        parts (clojure.string/split line #" ")
+        command (first parts)
+        n (Integer/parseInt (second parts))
+        pos (first pos_depth_aim)
+        depth (second pos_depth_aim)
+        aim (nth pos_depth_aim 2)]
+    (condp = command
+     "forward" (seq [(+ n pos) (+ depth (* aim n)) aim])
+     "up" (seq [pos depth (- aim n)])
+     "down" (seq [pos depth (+ aim n)]))
+    ))
 
+;(def aoc02-test [
+;  "forward 5"
+;  "down 5"
+;  "forward 8"
+;  "up 3"
+;  "down 8"
+;  "forward 2" ])
+;
+;(print-answer-02 (reduce aoc02b-navigate '(0 0 0) aoc02-test))
+
+(defn aoc02b []
+  (let [lines (read-strings "input-02")]
+    (print-answer-02 (reduce aoc02b-navigate '(0 0 0) lines))))
 
 
 (defn exec [func_name]
@@ -58,3 +83,4 @@
 (exec "aoc01")
 (exec "aoc01b")
 (exec "aoc02")
+(exec "aoc02b")
