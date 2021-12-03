@@ -92,9 +92,8 @@
 
 (assert (= 10 (bin-to-dec [1 0 1 0])))
 
-(defn gamma-binary [lines] 
+(defn gamma-binary [numbers] 
 (let [
-      numbers (mapv chars-to-ints lines)
       f (first numbers)
       bit-counts (reduce map-sum-2 f (rest numbers))
       max-bits (count numbers) ]
@@ -102,18 +101,77 @@
           epsilon (map #(if (< % (- max-bits %)) 1 0) bit-counts)]
       [ (bin-to-dec gamma) (bin-to-dec epsilon) ]
     )
-    
 ))
 
-
-; aoc03test
 (let [input [ "00100" "11110" "10110" "10111" "10101"
               "01111" "00111" "11100" "10000" "11001"
               "00010" "01010"]]
-  (assert (= [22 9] (gamma-binary input))))
+  (assert (= [22 9] (gamma-binary (map chars-to-ints input)))))
+
+
+(defn aoc3-most-bit-at-pos [numbers pos cmp?]
+  (let [
+       bits (map #(nth % pos) numbers)
+       n-ones (reduce + bits)
+       max-bits (count bits)
+       ]
+    (if (cmp? n-ones (- max-bits n-ones)) 1 0)))
+
+(assert (= (aoc3-most-bit-at-pos (map chars-to-ints ["0" "0" "0" "1"]) 0 >) 0))
+(assert (= (aoc3-most-bit-at-pos (map chars-to-ints ["0" "0" "0" "1"]) 0 <) 1))
+(assert (= (aoc3-most-bit-at-pos (map chars-to-ints ["1" "1" "1" "0"]) 0 >) 1))
+(assert (= (aoc3-most-bit-at-pos (map chars-to-ints ["1" "1" "1" "0"]) 0 <) 0))
+
+
+(defn aoc3-filter [numbers pos cmp?] 
+  (let [
+        preferred-bit (aoc3-most-bit-at-pos numbers pos cmp?)
+        filtered (filter #(= (nth % pos) preferred-bit) numbers)
+        ]
+    (do 
+      (println numbers)
+      (println pos preferred-bit)
+      (println filtered)
+      (println "--")
+    (if (= (count filtered) 1)
+      (bin-to-dec (first filtered))
+      (aoc3-filter filtered (+ 1 pos) cmp?)))))
+
+(defn aoc3-oxygen [numbers]
+  (aoc3-filter numbers 0 >))
+
+(defn aoc3-co2 [numbers]
+  (aoc3-filter numbers 0 <))
+
+(defn oxygen-co2 [numbers]
+  [ (aoc3-oxygen numbers) (aoc3-co2 numbers) ])
 
 
 
+(let [input [ "00100" "11110" "10110" "10111" "10101"
+              "01111" "00111" "11100" "10000" "11001"
+              "00010" "01010"]]
+  (do
+    (assert (= 23 (aoc3-oxygen (map chars-to-ints input))))
+    (assert (= 10 (aoc3-co2 (map chars-to-ints input))))))
+
+
+(defn aoc03 []
+  (let [lines (read-strings "input-03")
+        binaries (map chars-to-ints lines)
+        ge (gamma-binary binaries)
+        gamma (first ge)
+        eps (second ge)]
+    (* gamma eps)))
+
+
+(defn aoc03b []
+  (let [lines (read-strings "input-03")
+        binaries (map chars-to-ints lines)
+        x (oxygen-co2 binaries)
+        oxygen (first x)
+        co (second x)]
+    (* oxygen co2)))
 
 
 
@@ -125,4 +183,5 @@
 (exec "aoc01")
 (exec "aoc01b")
 (exec "aoc02")
-(exec "aoc02")
+(exec "aoc02b")
+(exec "aoc03")
