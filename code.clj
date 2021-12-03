@@ -1,3 +1,4 @@
+; :FireplaceConnect 33333
 
 (defn read-strings [file]
   (with-open [rdr (clojure.java.io/reader file)]
@@ -75,6 +76,47 @@
     (print-answer-02 (reduce aoc02b-navigate '(0 0 0) lines))))
 
 
+;;;; 3
+
+(defn chars-to-ints [line]
+  (mapv #(Character/digit % 10) line))
+
+(defn map-sum-2 [x1 x2] (map + x1 x2))
+
+(defn bin-to-dec [bits] 
+  (first (reduce (fn [work bit] 
+            (let [accum (first work)
+                  multiplier (second work)]
+                [ (+ accum (if (= 1 bit) multiplier 0)) (* multiplier 2)]))
+          [0 1] (reverse bits))))
+
+(assert (= 10 (bin-to-dec [1 0 1 0])))
+
+(defn gamma-binary [lines] 
+(let [
+      numbers (mapv chars-to-ints lines)
+      f (first numbers)
+      bit-counts (reduce map-sum-2 f (rest numbers))
+      max-bits (count numbers) ]
+    (let [gamma (map #(if (> % (- max-bits %)) 1 0) bit-counts)
+          epsilon (map #(if (< % (- max-bits %)) 1 0) bit-counts)]
+      [ (bin-to-dec gamma) (bin-to-dec epsilon) ]
+    )
+    
+))
+
+
+; aoc03test
+(let [input [ "00100" "11110" "10110" "10111" "10101"
+              "01111" "00111" "11100" "10000" "11001"
+              "00010" "01010"]]
+  (assert (= [22 9] (gamma-binary input))))
+
+
+
+
+
+
 (defn exec [func_name]
   (do
     (println func_name (apply (resolve (symbol func_name)) []))
@@ -83,4 +125,4 @@
 (exec "aoc01")
 (exec "aoc01b")
 (exec "aoc02")
-(exec "aoc02b")
+(exec "aoc02")
