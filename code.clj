@@ -19,21 +19,21 @@
 (defn make-board [s]
   (let [ lines (mapv split-separated-ints (string/split (string/trim s) #"\n"))]
     {
-     :initial lines
+     ;:initial lines
      :combos (concat lines (apply (partial mapv vector) lines))
      :remaining (reduce concat lines)
      :guesses []
-    }))
+     }))
 
 (defn apply-placed-number [n combos]
   (mapv #(filterv (partial not= n) %) combos))
 
 (defn board-place [n board]
   (merge board {
-   :combos (apply-placed-number n (get board :combos))
-   :remaining (filter (partial not= n) (get board :remaining))
-   :guesses (conj (get board :guesses) n)
-  }))
+                :combos (apply-placed-number n (get board :combos))
+                :remaining (filter (partial not= n) (get board :remaining))
+                :guesses (conj (get board :guesses) n)
+                }))
 
 
 
@@ -51,6 +51,13 @@
       (run-matches (mapv #(board-place n %) boards) (rest numbers)))))
 
 
+(defn run-matches-until-last [boards numbers]
+  (let [ n (first numbers) 
+          new-boards (map #(board-place n %) boards) ]
+    (if (some #(not (is-completed? %)) new-boards)
+      (run-matches-until-last (filter #(not (is-completed? %)) new-boards) (rest numbers))
+      (map append-score new-boards))))
+
 (defn split-into-boards [s]
   (mapv make-board (string/split s #"\n\n")))
 
@@ -60,6 +67,19 @@
   (run-matches a04tb a04tn))
 
 (let [nx (read-separated-ints "input-04-numbers")
-      bx (split-into-boards (slurp "input-04-boards"))]
-  (run-matches bx nx))
+      bx (split-into-boards (slurp "input-04-boards"))
+      res (run-matches bx nx)]
+  (do (println res)
+      res))
 
+(let [nx (read-separated-ints "input-04-numbers")
+      bx (split-into-boards (slurp "input-04-boards"))
+      res (run-matches-until-last bx nx)]
+  (do (println res)
+      res))
+
+(let [nx (read-separated-ints "test-04-numbers")
+      bx (split-into-boards (slurp "test-04-boards"))
+      res (run-matches-until-last bx nx)]
+  (do (println res)
+      res))
