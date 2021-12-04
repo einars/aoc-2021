@@ -115,12 +115,16 @@
        n-ones (reduce + bits)
        max-bits (count bits)
        ]
-    (if (cmp? n-ones (- max-bits n-ones)) 1 0)))
+    (if (= n-ones (- max-bits n-ones))
+      (if (cmp? 1 0) 1 0) ; 0 == 1
+      (if (cmp? n-ones (- max-bits n-ones)) 1 0))))
 
 (assert (= (aoc3-most-bit-at-pos (map chars-to-ints ["0" "0" "0" "1"]) 0 >) 0))
 (assert (= (aoc3-most-bit-at-pos (map chars-to-ints ["0" "0" "0" "1"]) 0 <) 1))
 (assert (= (aoc3-most-bit-at-pos (map chars-to-ints ["1" "1" "1" "0"]) 0 >) 1))
 (assert (= (aoc3-most-bit-at-pos (map chars-to-ints ["1" "1" "1" "0"]) 0 <) 0))
+(assert (= (aoc3-most-bit-at-pos (map chars-to-ints ["0" "1"]) 0 >) 1))
+(assert (= (aoc3-most-bit-at-pos (map chars-to-ints ["0" "1"]) 0 <) 0))
 
 
 (defn aoc3-filter [numbers pos cmp?] 
@@ -128,14 +132,9 @@
         preferred-bit (aoc3-most-bit-at-pos numbers pos cmp?)
         filtered (filter #(= (nth % pos) preferred-bit) numbers)
         ]
-    (do 
-      (println numbers)
-      (println pos preferred-bit)
-      (println filtered)
-      (println "--")
     (if (= (count filtered) 1)
       (bin-to-dec (first filtered))
-      (aoc3-filter filtered (+ 1 pos) cmp?)))))
+      (aoc3-filter filtered (+ 1 pos) cmp?))))
 
 (defn aoc3-oxygen [numbers]
   (aoc3-filter numbers 0 >))
@@ -170,7 +169,7 @@
         binaries (map chars-to-ints lines)
         x (oxygen-co2 binaries)
         oxygen (first x)
-        co (second x)]
+        co2 (second x)]
     (* oxygen co2)))
 
 
@@ -185,3 +184,4 @@
 (exec "aoc02")
 (exec "aoc02b")
 (exec "aoc03")
+(exec "aoc03b")
