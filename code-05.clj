@@ -67,7 +67,7 @@
   ;(read-strings "test-05")
   (read-strings "input-05")
   (mapv parse-vent)
-  (filter is-vent-straight?)
+  ;(filter is-vent-straight?)
   (mapv points-taken-by-vent)
   (find-overlaps)
   (count))
