@@ -41,7 +41,6 @@
   (merge board {
                 :score (* (last (get board :guesses))
                           (reduce + (get board :remaining)))
-
                 }))
 
 (defn run-matches [boards numbers]
