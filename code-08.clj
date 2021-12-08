@@ -33,22 +33,12 @@
 
 (def number-mapping-inverse
   (into {} (map (fn [[k v]] [v k]) number-mapping)))
-  
-(def length-mapping 
-  (let [numbers (map #(list (count (second %)) (first %) ) number-mapping)] 
-    (loop [xs numbers
-           accum {}]
-      (if (empty? xs)
-        accum
-        (let [len (first (first xs))
-              num (second (first xs))]
-          (recur (rest xs) (assoc accum len (conj (get accum len []) num))))))))
 
 
 
-(defn debug [s n] (do (println "DEBUG:" s " = " n) n))
-
-(defn of-length [n] (get length-mapping n []))
+(defn of-length [n] 
+  (let [numbers (map #(list (first %) (count (second %)) ) number-mapping)] 
+    (map first (filter #(= n (second %)) numbers))))
 
 
 (defn recur-test [tried-mappings input reqd constraints accum]
@@ -138,9 +128,9 @@
   (Integer/parseInt (string/join "" (map name solved))))
 
 
-(reduce + (map count-1478 (map solve-line (string/split (slurp "test-08") #"\n"))))
-(reduce + (map count-1478 (map solve-line (string/split (slurp "input-08") #"\n"))))
+(println (reduce + (map count-1478 (map solve-line (string/split (slurp "test-08") #"\n")))))
+(println (reduce + (map count-1478 (map solve-line (string/split (slurp "input-08") #"\n")))))
 
-(map line-as-int (map solve-line (string/split (slurp "test-08") #"\n")))
-(reduce + (map line-as-int (map solve-line (string/split (slurp "input-08") #"\n"))))
+(println (map line-as-int (map solve-line (string/split (slurp "test-08") #"\n"))))
+(println (reduce + (map line-as-int (map solve-line (string/split (slurp "input-08") #"\n")))))
 
