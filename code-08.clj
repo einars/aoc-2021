@@ -109,10 +109,7 @@
 
 
 (defn is-1478 [elt]
-  (or (= :1 elt)
-      (= :4 elt)
-      (= :7 elt)
-      (= :8 elt)))
+  (some? (elt #{:1 :4 :7 :8})))
 
 (defn count-1478 [line]
   (reduce + (map #(if (is-1478 %) 1 0) line)))
