@@ -3,6 +3,8 @@
 (defn split-separated-strings [s]
   (string/split (string/trim s) #"[ ,]+"))
 
+(defn filter-map [pred? m]
+  (into {} (filter (fn [[k v]] (pred? v)) m)))
 
 (def all-segments [:a :b :c :d :e :f :g])
 
@@ -34,45 +36,36 @@
 (def number-mapping-inverse
   (into {} (map (fn [[k v]] [v k]) number-mapping)))
 
-
-
 (defn of-length [n] 
-  (let [numbers (map #(list (first %) (count (second %)) ) number-mapping)] 
-    (map first (filter #(= n (second %)) numbers))))
+  (keys (filter-map #(= n (count %)) number-mapping)))
 
+(defn apply-mapping [constraints source target]
+  (reduce (fn [c seg] (if (= seg source)
+             (assoc c source (set [target]))
+             (assoc c seg (disj (seg c) target)) )) ; remove target from all others
+          constraints
+          all-segments))
 
-(defn recur-test [tried-mappings input reqd constraints accum]
+(defn search-constraints [input segments constraints accum]
   (if (empty? input)
-    [tried-mappings (conj accum tried-mappings)]
+    (conj accum constraints) ; success, constraints progagated to end of input
     (let [source (first input)
-          possible-targets-1 (filter #(nil? (% (set (vals tried-mappings)))) reqd)
-          possible-targets (filter #(some? (% (source constraints))) possible-targets-1)
-          ]
+          possible-targets (filter #(some? (% (source constraints))) segments)]
       (if (empty? possible-targets)
-        [tried-mappings accum] ; failed
+        accum ; no more possible constraint placements
         (loop [new-accum accum
                targets possible-targets]
           (if (empty? targets)
-            [tried-mappings new-accum]
-            (let [result (recur-test (assoc tried-mappings source (first targets))
-                                     (rest input)
-                                     reqd
-                                     constraints
+            new-accum
+            (let [result (search-constraints (rest input)
+                                     segments
+                                     (apply-mapping constraints source (first targets))
                                      new-accum)]
-              (recur (second result) (rest targets)))))))))
-
-
-(defn apply-mapping [constraints mapping]
-  (reduce #(if (some? (%2 mapping))
-             (assoc %1 %2 (set [(%2 mapping)]))
-             (assoc %1 %2 (reduce disj (%2 %1) (vals mapping)) ))
-          constraints all-segments))
-
+              (recur result (rest targets)))))))))
 
 
 (defn possible-mappings [input candidate constraints]
-  (map #(apply-mapping constraints %)
-       (second (recur-test {} input (candidate number-mapping) constraints []))))
+  (search-constraints input (candidate number-mapping) constraints []))
 
 
 (defn reduce-constraints [many_constraints word]
