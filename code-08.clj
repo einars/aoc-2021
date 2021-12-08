@@ -10,14 +10,14 @@
 
 (def initial-constraints
   {
-    :a (set all-segments)
-    :b (set all-segments)
-    :c (set all-segments)
-    :d (set all-segments)
-    :e (set all-segments)
-    :f (set all-segments)
-    :g (set all-segments)
-  })
+   :a (set all-segments)
+   :b (set all-segments)
+   :c (set all-segments)
+   :d (set all-segments)
+   :e (set all-segments)
+   :f (set all-segments)
+   :g (set all-segments)
+   })
 
 (def number-mapping
   {
@@ -41,8 +41,8 @@
 
 (defn apply-mapping [constraints source target]
   (reduce (fn [c seg] (if (= seg source)
-             (assoc c source (set [target]))
-             (assoc c seg (disj (seg c) target)) )) ; remove target from all others
+                        (assoc c source (set [target]))
+                        (assoc c seg (disj (seg c) target)) )) ; remove target from all others
           constraints
           all-segments))
 
@@ -58,9 +58,9 @@
           (if (empty? targets)
             new-accum
             (let [result (search-constraints (rest input)
-                                     segments
-                                     (apply-mapping constraints source (first targets))
-                                     new-accum)]
+                                             segments
+                                             (apply-mapping constraints source (first targets))
+                                             new-accum)]
               (recur result (rest targets)))))))))
 
 
@@ -109,10 +109,10 @@
 
 
 (defn is-1478 [elt]
-    (or (= :1 elt)
-        (= :4 elt)
-        (= :7 elt)
-        (= :8 elt)))
+  (or (= :1 elt)
+      (= :4 elt)
+      (= :7 elt)
+      (= :8 elt)))
 
 (defn count-1478 [line]
   (reduce + (map #(if (is-1478 %) 1 0) line)))
