@@ -1,8 +1,8 @@
 (require '[clojure.string :as string])
 
-(defn read-heightmap-line [accu line-and-n]
-  (let [line (first line-and-n)
-        y (second line-and-n)
+(defn read-heightmap-line [accu line-and-y]
+  (let [line (first line-and-y)
+        y (second line-and-y)
         line-and-x (map list line (range))]
     (reduce (fn [tmp-accu [ depth x ]] (assoc tmp-accu (list x y) (Integer/parseInt (str depth)) ))
             accu 
