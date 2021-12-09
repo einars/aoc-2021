@@ -31,7 +31,30 @@
         risks (map inc depths)]
     (reduce + risks)))
 
+(defn size-of-basin [m accum]
+  (let [expanse (->> (reduce concat (mapv neighbor-coords accum))
+                     (filter #(nil? (get accum %)))
+                     (filter #(some? (get m %)))
+                     (filter #(< (get m %) 9))
+                     (concat accum)
+                     (set))
+        ]
+    (if (= (count expanse) (count accum))
+      (count expanse)
+      (size-of-basin m expanse))))
+
+
+
+(defn solve-b [m]
+  (let [coords (find-low-points m)
+        sizes (mapv #(size-of-basin m (set (list %))) coords)]
+    (reduce * (take 3 (sort > sizes)))))
+
+
 (defn read-heightmap [file]
   (reduce read-heightmap-line {} (map list (string/split (slurp file) #"\n") (range))))
 
 (prn (solve-a (read-heightmap "test-09")))
+(prn (solve-a (read-heightmap "input-09")))
+
+(prn (solve-b (read-heightmap "test-09")))
