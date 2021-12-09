@@ -1,28 +1,23 @@
 (require '[clojure.string :as string])
 
-(defn read-heightmap-line [accu line-and-y]
-  (let [line (first line-and-y)
-        y (second line-and-y)
-        line-and-x (map list line (range))]
+(defn read-heightmap-line [accu [line y]]
+  (let [line-and-x (map list line (range))]
     (reduce (fn [tmp-accu [ depth x ]] (assoc tmp-accu (list x y) (Integer/parseInt (str depth)) ))
             accu 
             line-and-x)))
 
 
-(defn neighbor-coords [c]
-  (let [x (first c)
-        y (second c)]
-    (list [(inc x) y]
-          [x (inc y)]
-          [(dec x) y]
-          [x (dec y)])))
+(defn neighbor-coords [[x y]]
+  (list [(inc x) y]
+        [x (inc y)]
+        [(dec x) y]
+        [x (dec y)]))
 
 (defn find-low-points [m]
   (filter (fn [coord] 
-            (do
-              (every?
-                (fn [d] (> d (get m coord)))
-                (map #(get m % 10) (neighbor-coords coord)))))
+            (every?
+              (fn [d] (> d (get m coord)))
+              (map #(get m % 10) (neighbor-coords coord))))
           (keys m)))
 
 
