@@ -20,11 +20,11 @@
 
 (defn size-of-basin [m accum]
   (let [expanse (->> (reduce concat (map neighbor-coords accum)) ; all neighbors
-                     (filter #(nil? (get accum %))) ; only new
-                     (filter #(some? (get m %))) ; only actually on map
-                     (filter #(< (get m %) 9)) ; not walls
-                     (concat accum)
-                     (set))]
+                     (filter (complement accum)) ; only new, not in accum
+                     (filter m) ; coords actually on map
+                     (filter #(< (m %) 9)) ; not walls
+                     (apply conj accum) ; set/union
+                     )]
     (if (= expanse accum)
       (count expanse)
       (recur m expanse))))
