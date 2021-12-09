@@ -6,7 +6,6 @@
             accu 
             line-and-x)))
 
-
 (defn neighbor-coords [[x y]]
   (list [(inc x) y]
         [x (inc y)]
@@ -20,7 +19,6 @@
               (map #(get m % 10) (neighbor-coords coord))))
           (keys m)))
 
-
 (defn solve-a [m]
   (let [coords (find-low-points m)
         depths (map #(get m %) coords)
@@ -33,19 +31,15 @@
                      (filter #(some? (get m %))) ; only actually on map
                      (filter #(< (get m %) 9)) ; not walls
                      (concat accum)
-                     (set))
-        ]
+                     (set))]
     (if (= (count expanse) (count accum))
       (count expanse)
       (recur m expanse))))
-
-
 
 (defn solve-b [m]
   (let [coords (find-low-points m)
         sizes (mapv #(size-of-basin m (set (list %))) coords)]
     (reduce * (take 3 (sort > sizes)))))
-
 
 (defn read-heightmap [file]
   (reduce read-heightmap-line {} (map list (string/split (slurp file) #"\n") (range))))
