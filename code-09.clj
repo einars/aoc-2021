@@ -1,3 +1,4 @@
+(require '[clojure.string :as string])
 
 (defn read-heightmap-line [accu line-and-n]
   (let [line (first line-and-n)
