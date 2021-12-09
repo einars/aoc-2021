@@ -41,7 +41,7 @@
         ]
     (if (= (count expanse) (count accum))
       (count expanse)
-      (size-of-basin m expanse))))
+      (recur m expanse))))
 
 
 
@@ -58,3 +58,4 @@
 (prn (solve-a (read-heightmap "input-09")))
 
 (prn (solve-b (read-heightmap "test-09")))
+(prn (solve-b (read-heightmap "input-09")))
