@@ -33,10 +33,10 @@
     (reduce + risks)))
 
 (defn size-of-basin [m accum]
-  (let [expanse (->> (reduce concat (mapv neighbor-coords accum))
-                     (filter #(nil? (get accum %)))
-                     (filter #(some? (get m %)))
-                     (filter #(< (get m %) 9))
+  (let [expanse (->> (reduce concat (mapv neighbor-coords accum)) ; all neighbors
+                     (filter #(nil? (get accum %))) ; only new
+                     (filter #(some? (get m %))) ; only actually on map
+                     (filter #(< (get m %) 9)) ; not walls
                      (concat accum)
                      (set))
         ]
