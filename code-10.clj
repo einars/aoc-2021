@@ -46,7 +46,7 @@
       (reduce +)))
 
 (defn take-element-in-middle [coll]
-  { :pre (odd? (count coll)) }
+  { :pre [(odd? (count coll))] }
   (nth coll (/ (count coll) 2)))
 
 (defn solve-b [file]
