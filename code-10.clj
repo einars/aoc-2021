@@ -55,8 +55,7 @@
       (filter #(= (first %) :incomplete))
       (map get-score)
       (sort >)
-      (take-element-in-middle)
-      ))
+      (take-element-in-middle)))
 
 ; ---
 
