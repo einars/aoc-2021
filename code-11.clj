@@ -3,7 +3,7 @@
 (defn make-coordinate-map [[line y]]
   (let [line-and-x (map list line (range))]
     (reduce (fn [accu [elem x]] (assoc accu (list x y) (Integer/parseInt (str elem)) ))
-            {} 
+            {}
             line-and-x)))
 
 (defn read-xy-map [file]
@@ -39,33 +39,33 @@
          octos (map-apply initial-octos inc)]
     (cond
       (and (empty? coords) (not had-new-flashes))
-        [(clamp-values octos) (count flashes)] ; success
+      [(clamp-values octos) (count flashes)] ; success
 
       (and (empty? coords) had-new-flashes)
-        (recur false flashes (keys octos) octos) ; loop all over all the octos again
+      (recur false flashes (keys octos) octos) ; loop all over all the octos again
 
       :else
-        (let [my-coords (first coords)
-              my-level (octos my-coords)]
-          (if (and (> my-level 9) ((complement flashes) my-coords)) ; have to flash, but didn't flash yet
-              (recur true (conj flashes my-coords) (rest coords) (increase-level octos my-coords))
-              (recur had-new-flashes flashes (rest coords) octos))))))
+      (let [my-coords (first coords)
+            my-level (octos my-coords)]
+        (if (and (> my-level 9) ((complement flashes) my-coords)) ; have to flash, but didn't flash yet
+          (recur true (conj flashes my-coords) (rest coords) (increase-level octos my-coords))
+          (recur had-new-flashes flashes (rest coords) octos))))))
 
-(defn run-octo-iterations 
+(defn run-octo-iterations
   ([octos n] (run-octo-iterations octos n 0))
   ([octos n n-flashes]
-   (cond 
-     (= 0 n) n-flashes
-     :else (let [[new-octos new-flashes] (octostep octos)]
-             (recur new-octos (dec n) (+ n-flashes new-flashes))))))
+   (if (= 0 n)
+     n-flashes
+     (let [[new-octos new-flashes] (octostep octos)]
+       (recur new-octos (dec n) (+ n-flashes new-flashes))))))
 
 (defn find-synchronization-step
   ([octos] (find-synchronization-step octos 1))
   ([octos step]
-     (let [[new-octos n-flashes] (octostep octos)]
-       (if (= n-flashes (count octos))
-         step
-         (recur new-octos (inc step))))))
+   (let [[new-octos n-flashes] (octostep octos)]
+     (if (= n-flashes (count octos))
+       step
+       (recur new-octos (inc step))))))
 
 
 ;---
