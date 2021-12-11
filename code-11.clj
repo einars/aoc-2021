@@ -25,12 +25,9 @@
 (defn map-apply-when [m pred? func]
   (into {} (map (fn [[k v]] [k (if (pred? k)(func v) v)]) m)))
 
-
 (defn increase-level [octos at-coordinates]
   (let [nbs (set (find-neighbors at-coordinates))]
     (map-apply-when octos nbs inc)))
-
-
 
 (defn clamp-values [octos]
   (map-apply octos (fn [v] (if (> v 9) 0 v))))
@@ -62,7 +59,19 @@
      :else (let [[new-octos new-flashes] (octostep octos)]
              (recur new-octos (dec n) (+ n-flashes new-flashes))))))
 
+(defn find-synchronization-step
+  ([octos] (find-synchronization-step octos 1))
+  ([octos step]
+     (let [[new-octos n-flashes] (octostep octos)]
+       (if (= n-flashes (count octos))
+         step
+         (recur new-octos (inc step))))))
 
+
+;---
 
 (prn (run-octo-iterations (read-xy-map "data/test-11") 10))
 (prn (run-octo-iterations (read-xy-map "data/input-11") 100))
+
+(prn (find-synchronization-step (read-xy-map "data/test-11")))
+(prn (find-synchronization-step (read-xy-map "data/input-11")))
