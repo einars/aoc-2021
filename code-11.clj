@@ -10,14 +10,14 @@
   (reduce merge (map make-coordinate-map (map list (str/split (slurp file) #"\n") (range)))))
 
 (defn find-neighbors [[x y]]
-  (list [(inc x) y]
+  (set [[(inc x) y]
         [x (inc y)]
         [(dec x) y]
         [x (dec y)]
         [(dec x) (dec y)]
         [(dec x) (inc y)]
         [(inc x) (dec y)]
-        [(inc x) (inc y)]))
+        [(inc x) (inc y)]]))
 
 (defn map-apply [m func]
   (into {} (map (fn [[k v]] [k (func v)]) m)))
@@ -25,9 +25,8 @@
 (defn map-apply-when [m pred? func]
   (into {} (map (fn [[k v]] [k (if (pred? k)(func v) v)]) m)))
 
-(defn increase-level [octos at-coordinates]
-  (let [nbs (set (find-neighbors at-coordinates))]
-    (map-apply-when octos nbs inc)))
+(defn increase-neighbor-level [octos coord]
+  (map-apply-when octos (find-neighbors coord) inc))
 
 (defn clamp-values [octos]
   (map-apply octos (fn [v] (if (> v 9) 0 v))))
@@ -48,7 +47,10 @@
       (let [my-coords (first coords)
             my-level (octos my-coords)]
         (if (and (> my-level 9) ((complement flashes) my-coords)) ; have to flash, but didn't flash yet
-          (recur true (conj flashes my-coords) (rest coords) (increase-level octos my-coords))
+          (recur true 
+                 (conj flashes my-coords)
+                 (rest coords)
+                 (increase-neighbor-level octos my-coords))
           (recur had-new-flashes flashes (rest coords) octos))))))
 
 (defn run-octo-iterations
