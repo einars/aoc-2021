@@ -1,5 +1,9 @@
-Advent of code - 2021
-
+Advent of code 2021
+====================
 https://adventofcode.com/2021
 
-Toying arond with clojure
+My solutions to the playground problems in clojure, learning it as I go.
+
+No lein/project etc organization, just repl sources that typically can be run
+with `clj code-NN.clj`
+

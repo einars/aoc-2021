@@ -118,9 +118,9 @@
   (Integer/parseInt (string/join "" (map name solved))))
 
 
-(println (reduce + (map count-1478 (map solve-line (string/split (slurp "test-08") #"\n")))))
-(println (reduce + (map count-1478 (map solve-line (string/split (slurp "input-08") #"\n")))))
+(println (reduce + (map count-1478 (map solve-line (string/split (slurp "data/test-08") #"\n")))))
+(println (reduce + (map count-1478 (map solve-line (string/split (slurp "data/input-08") #"\n")))))
 
-(println (map line-as-int (map solve-line (string/split (slurp "test-08") #"\n"))))
-(println (reduce + (map line-as-int (map solve-line (string/split (slurp "input-08") #"\n")))))
+(println (map line-as-int (map solve-line (string/split (slurp "data/test-08") #"\n"))))
+(println (reduce + (map line-as-int (map solve-line (string/split (slurp "data/input-08") #"\n")))))
 

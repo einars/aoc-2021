@@ -29,6 +29,6 @@
 
 
 (apply min (iterate-crabs (split-separated-ints "16,1,2,0,4,2,7,1,2,14")))
-(apply min (iterate-crabs (read-separated-ints "input-07")))
+(apply min (iterate-crabs (read-separated-ints "data/input-07")))
 
 

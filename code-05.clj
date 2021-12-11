@@ -64,8 +64,8 @@
       (= (second start) (second finish)))))
 
 (->>
-  ;(read-strings "test-05")
-  (read-strings "input-05")
+  ;(read-strings "data/test-05")
+  (read-strings "data/input-05")
   (mapv parse-vent)
   ;(filter is-vent-straight?)
   (mapv points-taken-by-vent)

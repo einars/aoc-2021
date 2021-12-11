@@ -41,5 +41,5 @@
 ;(println (reduce + (vals (grow-some-generations (create-population (split-separated-ints "3,4,3,1,2")) 80))))
 ;(println (reduce + (vals (grow-some-generations (create-population (split-separated-ints "3,4,3,1,2")) 256))))
 
-(println (reduce + (vals (grow-some-generations (create-population (read-separated-ints "input-06")) 256))))
+(println (reduce + (vals (grow-some-generations (create-population (read-separated-ints "data/input-06")) 256))))
 

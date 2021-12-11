@@ -63,8 +63,8 @@
 (assert (= [:ok] (parse-parens "()")))
 (assert (= [:syntax ")"] (parse-parens ")")))
 
-(prn (solve-a "test-10"))
-(prn (solve-a "input-10"))
+(prn (solve-a "data/test-10"))
+(prn (solve-a "data/input-10"))
 
-(prn (solve-b "test-10"))
-(prn (solve-b "input-10"))
+(prn (solve-b "data/test-10"))
+(prn (solve-b "data/input-10"))

@@ -9,14 +9,14 @@
 
 
 (defn aoc01 []
-  (let [numbers (read-ints "input-01a")]
+  (let [numbers (read-ints "data/input-01a")]
     (count (filter #(< (first %) (second %)) (partition 2 1 numbers)))))
 
 ; 1292
 (aoc01)
 
 (defn aoc01b []
-  (let [numbers (read-ints "input-01a")
+  (let [numbers (read-ints "data/input-01a")
         sums (mapv #(+ (first %) (second %) (nth % 2)) (partition 3 1 numbers))]
     (count (filter #(< (first %) (second %)) (partition 2 1 sums)))))
 
@@ -44,7 +44,7 @@
       pos_and_depth)))
 
 (defn aoc02 []
-  (let [lines (read-strings "input-02")]
+  (let [lines (read-strings "data/input-02")]
     (print-answer-02 (reduce aoc02-navigate '(0 0) lines))))
 
 (defn aoc02b-navigate [ pos_depth_aim line ]
@@ -72,7 +72,7 @@
 ;(print-answer-02 (reduce aoc02b-navigate '(0 0 0) aoc02-test))
 
 (defn aoc02b []
-  (let [lines (read-strings "input-02")]
+  (let [lines (read-strings "data/input-02")]
     (print-answer-02 (reduce aoc02b-navigate '(0 0 0) lines))))
 
 
@@ -156,7 +156,7 @@
 
 
 (defn aoc03 []
-  (let [lines (read-strings "input-03")
+  (let [lines (read-strings "data/input-03")
         binaries (map chars-to-ints lines)
         ge (gamma-binary binaries)
         gamma (first ge)
@@ -165,7 +165,7 @@
 
 
 (defn aoc03b []
-  (let [lines (read-strings "input-03")
+  (let [lines (read-strings "data/input-03")
         binaries (map chars-to-ints lines)
         x (oxygen-co2 binaries)
         oxygen (first x)

@@ -46,8 +46,8 @@
 (defn read-heightmap [file]
   (reduce read-heightmap-line {} (map list (string/split (slurp file) #"\n") (range))))
 
-(prn (solve-a (read-heightmap "test-09")))
-(prn (solve-a (read-heightmap "input-09")))
+(prn (solve-a (read-heightmap "data/test-09")))
+(prn (solve-a (read-heightmap "data/input-09")))
 
-(prn (solve-b (read-heightmap "test-09")))
-(prn (solve-b (read-heightmap "input-09")))
+(prn (solve-b (read-heightmap "data/test-09")))
+(prn (solve-b (read-heightmap "data/input-09")))

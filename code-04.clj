@@ -61,18 +61,18 @@
   (mapv make-board (string/split s #"\n\n")))
 
 (do
-  (def a04tn (read-separated-ints "test-04-numbers"))
-  (def a04tb (split-into-boards (slurp "test-04-boards")))
+  (def a04tn (read-separated-ints "data/test-04-numbers"))
+  (def a04tb (split-into-boards (slurp "data/test-04-boards")))
   (run-matches a04tb a04tn))
 
-(let [nx (read-separated-ints "input-04-numbers")
-      bx (split-into-boards (slurp "input-04-boards"))
+(let [nx (read-separated-ints "data/input-04-numbers")
+      bx (split-into-boards (slurp "data/input-04-boards"))
       res (run-matches bx nx)]
   (do (println res)
       res))
 
-(let [nx (read-separated-ints "input-04-numbers")
-      bx (split-into-boards (slurp "input-04-boards"))
+(let [nx (read-separated-ints "data/input-04-numbers")
+      bx (split-into-boards (slurp "data/input-04-boards"))
       res (run-matches-until-last bx nx)]
   (do (println res)
       res))
