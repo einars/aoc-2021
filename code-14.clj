@@ -1,4 +1,5 @@
 (require '[clojure.string :as str])
+(require '[clojure.core.memoize :as memoize])
 
 (defn make-rule [s]
   (let [[f t] (str/split s #" -> ")]
@@ -10,44 +11,44 @@
 (defn parse-input [file]
   (let [[template rules] (str/split (slurp file) #"\n\n")
         rule-set (make-rule-map (str/split rules #"\n"))]
-    (do (prn rule-set)
-    (list (map keyword (map str template)) rule-set))))
+    (list (map keyword (map str template)) rule-set)))
 
+(def ^:dynamic *rules* {})
 
-(defn apply-rules [template rules]
+(def memo-iterate-pair) ; forward-ref
+(defn iterate-pair [a b n]
+  "returns map of frequencies"
 
-  (loop [items template
-         accu []
-         prev-item nil]
-    (let [cur-item (first items)]
-    (cond
-      (empty? items)
-      accu
+  (if (= n 0)
+    { b 1 } ; a is already counted
+    (if-let [c (*rules* [a b])]
+      (merge-with +
+             (memo-iterate-pair a c (dec n))
+             (memo-iterate-pair c b (dec n)))
+      (iterate-pair a b (dec n)))))
 
-      (rules [prev-item cur-item])
-      (recur (rest items)
-             (-> accu
-              (conj (rules [prev-item cur-item]))
-              (conj cur-item)
-              )
-             cur-item)
+(def memo-iterate-pair (memoize/memo iterate-pair ))
 
-      :else
-      (recur (rest items) (conj accu cur-item) cur-item)))))
-
-
-(defn calc-score [template]
-  (let [freqs (frequencies template)
-        min-freq (apply min (vals freqs))
+(defn calc-score [freqs]
+  (let [min-freq (apply min (vals freqs))
         max-freq (apply max (vals freqs))]
     (- max-freq min-freq)))
 
 (defn iterate-n [file n]
-  (let [[template, rules] (parse-input file)
-        result (reduce (fn [a, i] (apply-rules a rules)) template (range n))
-        ]
-        result))
+  (let [[template, rules] (parse-input file)]
+    (do
+      (memoize/memo-clear! memo-iterate-pair)
+      (binding [*rules* rules]
+        (loop [items template
+              prev-item nil
+              freqs {}]
+          (if (empty? items)
+            freqs
+            (recur (rest items)
+                  (first items)
+                  (merge-with + freqs (memo-iterate-pair prev-item (first items) n)))))))))
 
 
 (assert (= 1588 (calc-score (iterate-n "data/test-14.txt" 10))))
 (prn (calc-score (iterate-n "data/input-14.txt" 10)))
+(prn (calc-score (iterate-n "data/input-14.txt" 40)))
