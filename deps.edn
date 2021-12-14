@@ -1,1 +1,5 @@
-{ :deps  {org.clojure/tools.trace {:mvn/version "0.7.11"}}}
+{ :deps  {
+          org.clojure/tools.trace {:mvn/version "0.7.11"}
+          org.clojure/math.combinatorics {:mvn/version "0.1.6"}}}
+
+
