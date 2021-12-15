@@ -35,13 +35,13 @@
 (defn trace-path 
   ([m] (trace-path m (assoc {} [0 0] 0) [[0 0]] ))
   ([m best-paths front]
-   (let [new-front (reduce #(improve-around-neighbors m best-paths %1 %2) {} (keys best-paths))]
+   (let [new-front (reduce #(improve-around-neighbors m best-paths %1 %2) {} front)]
      (do (prn "new-front" (count new-front))
          (if (empty? new-front)
            best-paths
            (recur m
                   (merge best-paths new-front)
-                  new-front))))))
+                  (keys new-front)))))))
 
 (defn bottom-right [area] [(apply max (map first (keys area)))
                            (apply max (map second (keys area)))])
