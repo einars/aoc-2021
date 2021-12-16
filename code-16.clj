@@ -82,6 +82,24 @@
             (list {:version version, :packet-type packet-type, :sub subpackets } 
                   bs)))))))
 
+
+(def bool-to-int 
+  { true 1
+   false 0})
+
+(defn eval-packet [p]
+  (condp = (:packet-type p)
+    0 (apply + (map eval-packet (:sub p)))
+    1 (apply * (map eval-packet (:sub p)))
+    2 (apply min (map eval-packet (:sub p)))
+    3 (apply max (map eval-packet (:sub p)))
+    4 (:literal p)
+    5 (bool-to-int (> (eval-packet (first (:sub p))) (eval-packet (second (:sub p)))))
+    6 (bool-to-int (< (eval-packet (first (:sub p))) (eval-packet (second (:sub p)))))
+    7 (bool-to-int (= (eval-packet (first (:sub p))) (eval-packet (second (:sub p)))))))
+
+
+
 (defn sum-versions
   ([ps] (sum-versions ps 0))
   ([ps accu]
@@ -91,8 +109,6 @@
                          (:version (first ps)) 
                          (sum-versions (:sub (first ps)) 0))))))
 
-
-
 (defn make-bitstream [s] (mapcat hex-map s))
 
 (defn solve-a [s]
@@ -100,6 +116,14 @@
        (parse-bitstream-until-end)
        ;(parse-bitstream)
        (sum-versions)))
+
+(defn solve-b [s]
+  (->> (make-bitstream s)
+       (parse-bitstream)
+       (first)
+       (eval-packet)))
+
+
 
 (defn format-packet [p]
    (format "%d:%d%s" (:version p) (:packet-type p)
@@ -111,4 +135,16 @@
 (assert (= 12 (solve-a "620080001611562C8802118E34")))
 (assert (= 23 (solve-a "C0015000016115A2E0802F182340")))
 (assert (= 31 (solve-a "A0016C880162017C3686B18A3D4780")))
+
 (prn (solve-a (slurp "data/input-16.txt")))
+
+(assert (= 3 (solve-b "C200B40A82")))
+(assert (= 54 (solve-b "04005AC33890")))
+(assert (= 7 (solve-b "880086C3E88112")))
+(assert (= 9 (solve-b "CE00C43D881120")))
+(assert (= 1 (solve-b "D8005AC2A8F0")))
+(assert (= 0 (solve-b "F600BC2D8F")))
+(assert (= 0 (solve-b "9C005AC2F8F0")))
+(assert (= 1 (solve-b "9C0141080250320F1802104A08")))
+
+(prn (solve-b (slurp "data/input-16.txt")))
