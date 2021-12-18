@@ -1,17 +1,10 @@
 (require '[clojure.string :as str])
 (require '[clojure.tools.trace :use all])
-(require '[clojure.core.match :as match])
 
 
 (defn parse-snail [s] (read-string s)) ; just use clojure edn parser
 
-(defn parse-problem [s]
-  (map parse-snail (str/split s #"\n")))
-
-(defn morph-number [n]
-  (if (and (number? n) (> n 9))
-    (list (quot n 2) (int (Math/ceil (/ n 2))))
-    n))
+(defn parse-problem [s] (map parse-snail (str/split s #"\n")))
 
 (defn adjust-back [s adj]
   (if (number? s)
@@ -47,19 +40,18 @@
 (defn add-snail [s1 s2]
   (exec-snail (list s1 s2)))
 
-(defn sum-snails [ss] (reduce add-snail ss))
-
 (defn magnitude [s] 
   (if (number? s) s
     (let [[l r] s] 
       (+ (* 3 (magnitude l))
          (* 2 (magnitude r))))))
 
-
 (defn largest-sum [ss]
   (apply max (for [a ss
                    b ss]
                (if (= a b) 0 (magnitude (add-snail a b))))))
+
+; ---
 
 (assert (= [[[[0,9],2],3],4] (exec-snail (parse-snail "[[[[[9,8],1],2],3],4] "))))
 
