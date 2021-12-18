@@ -1,6 +1,8 @@
 { :deps  {
           org.clojure/tools.trace {:mvn/version "0.7.11"}
           org.clojure/math.combinatorics {:mvn/version "0.1.6"}
-          org.clojure/core.memoize {:mvn/version "1.0.253"} }}
+          org.clojure/core.memoize {:mvn/version "1.0.253"}
+          org.clojure/core.match {:mvn/version "1.0.0"}
+          }}
 
 
