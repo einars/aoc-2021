@@ -79,4 +79,6 @@
 ; ---
 
 (assert (= 35 (solve-problem "data/test-20.txt" 2)))
+(assert (= 3351 (solve-problem "data/test-20.txt" 50)))
 (prn (solve-problem "data/input-20.txt" 2))
+(prn (solve-problem "data/input-20.txt" 50))
