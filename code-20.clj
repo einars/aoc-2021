@@ -19,11 +19,11 @@
    [(inc x) (inc y)]])
 
 (defn parse-rules [s]
-  (into {} (map (fn [v idx] [ (int->bin9 idx) (if (= \# v) 1 0) ] ) s (range))))
+  (into {} (map (fn [v idx] [(int->bin9 idx) (if (= \# v) 1 0)]) s (range))))
 
 (defn make-coordinate-map [[line y]]
   (let [line-and-x (map list line (range))]
-    (reduce (fn [accu [elem x]] (assoc accu (list x y) (if (= \# elem) 1 0)))
+    (reduce (fn [accu [elem x]] (assoc accu [x y] (if (= \# elem) 1 0)))
             {}
             line-and-x)))
 
@@ -44,17 +44,17 @@
   (let [min-range (apply min (map first (keys image))) ; assume square
         max-range (apply max (map first (keys image)))
         proc-range (range (- min-range 1) (inc (+ max-range 1)))
-        new-image (zipmap
-                    (for [x proc-range, y proc-range] [x y])
-                    (for [x proc-range, y proc-range]
-                                (apply-rules-at [x y] image rules inf)))]
-    [new-image rules (rules [inf inf inf inf inf inf inf inf inf])]))
+        all-coords (for [x proc-range, y proc-range] [x y])
+        new-image (zipmap all-coords
+                          (map #(apply-rules-at % image rules inf) all-coords))
+        new-inf (rules [inf inf inf inf inf inf inf inf inf])]
+    [new-image rules new-inf]))
 
 (defn get-result-a [image]
   (count (filter (partial = 1) (vals image))))
 
 (defn solve-problem [file n-iterations]
-  (let [ [rules image] (parse-problem (slurp file))]
+  (let [[rules image] (parse-problem (slurp file))]
     (get-result-a (first (nth (iterate apply-rules [image rules 0]) n-iterations)))))
 
 ; ---
