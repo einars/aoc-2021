@@ -38,47 +38,29 @@
 
 (defn apply-rules-at [coord image rules inf]
   (let [idx (map #(image % inf) (neighbors coord))]
-    (rules idx nil)))
+    (rules idx)))
 
-(defn print-image [image]
+(defn apply-rules [[image rules inf]]
   (let [min-range (apply min (map first (keys image))) ; assume square
         max-range (apply max (map first (keys image)))
-        proc-range (range (- min-range 2) (inc (+ max-range 2)))
-        pixels (into {} [[nil "~"] [0 "."] [1 "#"]])]
-    (count (for [y proc-range, x proc-range]
-             (do
-               (if (= x (- min-range 2)) (printf "\n"))
-               (printf "%s" (pixels (image [x y]))))))
-    (println)
-    image))
-
-(defn apply-rules [image rules inf]
-  (let [min-range (apply min (map first (keys image))) ; assume square
-        max-range (apply max (map first (keys image)))
-        proc-range (range (- min-range 2) (inc (+ max-range 2)))
-        new-image (reduce #(assoc %1 (first %2) (second %2)) 
-                          {}
-                          (for [x proc-range, y proc-range]
-                            (list (list x y)
-                                  (apply-rules-at [x y] image rules inf))))]
-    [new-image (rules [inf inf inf inf inf inf inf inf inf])]))
-
-(defn iterate-problem [image rules inf n-iterations]
-  (if (= n-iterations 0) 
-    image
-    (let [[new-image new-inf] (apply-rules image rules inf)]
-      (recur new-image rules new-inf (dec n-iterations)))))
+        proc-range (range (- min-range 1) (inc (+ max-range 1)))
+        new-image (zipmap
+                    (for [x proc-range, y proc-range] [x y])
+                    (for [x proc-range, y proc-range]
+                                (apply-rules-at [x y] image rules inf)))]
+    [new-image rules (rules [inf inf inf inf inf inf inf inf inf])]))
 
 (defn get-result-a [image]
   (count (filter (partial = 1) (vals image))))
 
 (defn solve-problem [file n-iterations]
   (let [ [rules image] (parse-problem (slurp file))]
-    (get-result-a (iterate-problem image rules 0 n-iterations))))
+    (get-result-a (first (nth (iterate apply-rules [image rules 0]) n-iterations)))))
 
 ; ---
 
 (assert (= 35 (solve-problem "data/test-20.txt" 2)))
 (assert (= 3351 (solve-problem "data/test-20.txt" 50)))
+
 (prn (solve-problem "data/input-20.txt" 2))
 (prn (solve-problem "data/input-20.txt" 50))
