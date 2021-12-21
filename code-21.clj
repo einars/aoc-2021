@@ -30,33 +30,6 @@
     (* lose n-rolls)))
 
 
-
-(def dirac-play-p1)
-(def dirac-play-p2)
-
-(defn memo-dirac-play-p1 [p1-space p1-score p2-space p2-score]
-  (cond
-    (>= p1-score 21) [1 0]
-    (>= p2-score 21) [0 1]
-    :else 
-    (let [m1 (clamp-one (+ p1-space 1) 10)
-          m2 (clamp-one (+ p1-space 2) 10)
-          m3 (clamp-one (+ p1-space 3) 10)]
-      (map + 
-           (dirac-play-p2 m1
-                          (+ p1-score m1)
-                          p2-space
-                          p2-score)
-           (dirac-play-p2 m2
-                          (+ p1-score m2)
-                          p2-space
-                          p2-score)
-           (dirac-play-p2 m3
-                          (+ p1-score m3)
-                          p2-space
-                          p2-score)))))
-
-
 (def next-move
   {:roll-1-1 :roll-1-2
    :roll-1-2 :roll-1-3
