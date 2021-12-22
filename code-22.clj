@@ -4,7 +4,7 @@
 (defn parse-line [s]
   (let [ms (re-matches #"^(on|off) x=(-?\d+)\.\.(-?\d+),y=(-?\d+)\.\.(-?\d+),z=(-?\d+)\.\.(-?\d+)" s)
         [_ mode xf xt yf yt zf zt] ms]
-    {:add (if (= "on" mode) true false)
+    {:add (= "on" mode)
      :x [(Integer/parseInt xf) (Integer/parseInt xt)]
      :y [(Integer/parseInt yf) (Integer/parseInt yt)]
      :z [(Integer/parseInt zf) (Integer/parseInt zt)]
@@ -29,80 +29,72 @@
 
 
 
-(defn split-cube [cube against]
+(defn remove-area [cube area accu]
   (let [[x y z] cube
         [[xa xb] [ya yb] [za zb]] cube
-        [[xf xt] [yf yt] [zf zt]] against]
+        [[xf xt] [yf yt] [zf zt]] area]
     (cond
       (and (<= xf xa xb xt)
            (<= yf ya yb yt)
            (<= zf za zb zt))
-      ; 'cube completely encased in 'against
-      []
+      ; 'cube completely encased in 'area
+      accu
 
       (or (< xb xf) (> xa xt)
           (< yb yf) (> ya yt)
           (< zb zf) (> za zt))
       ; 'cubes don't intersect
-      [cube]
+      (conj accu cube)
 
       (< xa xf (inc xb))
-      (concat
-        (split-cube [[xa (dec xf)] y z] against)
-        (split-cube [[xf xb] y z] against))
+      (->> accu
+        (remove-area [[xa (dec xf)] y z] area)
+        (remove-area [[xf xb] y z] area))
 
       (< (dec xa) xt xb)
-      (concat
-        (split-cube [[xa xt] y z] against)
-        (split-cube [[(inc xt) xb] y z] against))
+      (->> accu
+        (remove-area [[xa xt] y z] area)
+        (remove-area [[(inc xt) xb] y z] area))
 
       (< ya yf (inc yb))
-      (concat
-        (split-cube [x [ya (dec yf)] z] against)
-        (split-cube [x [yf yb] z] against))
+      (->> accu
+        (remove-area [x [ya (dec yf)] z] area)
+        (remove-area [x [yf yb] z] area))
 
       (< (dec ya) yt yb)
-      (concat
-        (split-cube [x [ya yt] z] against)
-        (split-cube [x [(inc yt) yb] z] against))
+      (->> accu
+        (remove-area [x [ya yt] z] area)
+        (remove-area [x [(inc yt) yb] z] area))
 
       (< za zf (inc zb))
-      (concat
-        (split-cube [x y [za (dec zf)]] against)
-        (split-cube [x y [zf zb]] against))
+      (->> accu
+        (remove-area [x y [za (dec zf)]] area)
+        (remove-area [x y [zf zb]] area))
 
       (< (dec za) zt zb)
-      (concat
-        (split-cube [x y [za zt]] against)
-        (split-cube [x y [(inc zt) zb]] against))
+      (->> accu
+        (remove-area [x y [za zt]] area)
+        (remove-area [x y [(inc zt) zb]] area))
 
       :else
       (assert false))))
 
 
 (defn apply-b [cubes prob]
-  (prn prob (count cubes))
-  (let [target [ (:x prob) (:y prob) (:z prob)]
-        flt-cubes (reduce concat (map (fn [c] (split-cube c target)) cubes))]
-    flush()
+  (let [area [(:x prob) (:y prob) (:z prob)]
+        flt-cubes (reduce #(remove-area %2 area %1) [] cubes)]
     (if (:add prob)
-      (conj flt-cubes target)
+      (conj flt-cubes area)
       flt-cubes)))
 
 (defn volume [[[xf xt] [yf yt] [zf zt]]]
   (* (inc (- xt xf)) (inc (- yt yf)) (inc (- zt zf))))
-
-(defn debug-count [n]
-  (prn (count n))
-  n)
-
 
 (defn solve-b [file]
   (->> file
        (slurp)
        (parse-problem)
        (reduce apply-b [])
-       (debug-count)
        (map volume)
        (apply +)))
 
