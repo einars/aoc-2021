@@ -92,18 +92,18 @@
 
 (defn solve-b [file]
   (->> file
-       (slurp)
-       (parse-problem)
+       slurp
+       parse-problem
        (reduce apply-b [])
        (map volume)
        (apply +)))
 
 (defn solve-a [file]
   (->> file
-       (slurp)
-       (parse-problem)
+       slurp
+       parse-problem
        (reduce apply-a #{})
-       (count)))
+       count))
 
 ;(assert (= 590784 (solve-a "data/test-22.txt")))
 ;(prn (solve-a "data/input-22.txt"))
